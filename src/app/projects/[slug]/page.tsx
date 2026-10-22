@@ -123,7 +123,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
                 alt={`${project.title} screenshot`}
                 width={800}
                 height={520}
-                className="w-full rounded-xl object-cover shadow-[var(--shadow-aceternity)]"
+                className="aspect-[16/10] w-full rounded-xl object-cover object-top shadow-[var(--shadow-aceternity)]"
               />
             ))}
           </div>

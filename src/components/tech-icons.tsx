@@ -27,6 +27,8 @@ import {
   SiMeta,
   SiShadcnui,
   SiBetterauth,
+  SiThreedotjs,
+  SiResend,
 } from "react-icons/si";
 import { DiJava } from "react-icons/di";
 import { FaAws } from "react-icons/fa6";
@@ -114,6 +116,8 @@ const projectTools: Tech[] = [
   { name: "Google Tag Manager", icon: SiGoogletagmanager, color: "#246FDB" },
   { name: "Meta Pixel", icon: SiMeta, color: "#0866FF" },
   { name: "Meta Ads", icon: SiMeta, color: "#0866FF" },
+  { name: "Three.js", icon: SiThreedotjs, color: "currentColor" },
+  { name: "Resend", icon: SiResend, color: "currentColor" },
 ];
 
 export const toolIcon = (name: string) =>
