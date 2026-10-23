@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { IconArrowLeft, IconArrowRight, IconArrowUpRight } from "@tabler/icons-react";
 import { ButtonLink } from "@/components/button";
+import { FeatureTabs } from "@/components/feature-tabs";
 import { Heading } from "@/components/heading";
 import { PageShell } from "@/components/page-shell";
 import { ProjectCover } from "@/components/project-card";
+import { ProjectGallery } from "@/components/project-gallery";
 import { InsetSection } from "@/components/section";
 import { SectionHeading } from "@/components/section-heading";
 import { Stack } from "@/components/stack-item";
@@ -107,6 +108,13 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
         </div>
       </div>
 
+      {project.features && project.features.length > 0 && (
+        <InsetSection className="my-6">
+          <SectionHeading className="mb-6">Everything it does</SectionHeading>
+          <FeatureTabs groups={project.features} />
+        </InsetSection>
+      )}
+
       <div className="px-4 py-6">
         <SectionHeading className="mb-4">Built with</SectionHeading>
         <Stack items={project.tools} />
@@ -114,19 +122,12 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
 
       {project.gallery && project.gallery.length > 0 && (
         <InsetSection className="my-6">
-          <SectionHeading className="mb-6">Gallery</SectionHeading>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {project.gallery.map((src) => (
-              <Image
-                key={src}
-                src={src}
-                alt={`${project.title} screenshot`}
-                width={800}
-                height={520}
-                className="aspect-[16/10] w-full rounded-xl object-cover object-top shadow-[var(--shadow-aceternity)]"
-              />
-            ))}
-          </div>
+          <SectionHeading className="mb-2">Gallery</SectionHeading>
+          <p className="text-secondary pb-6 text-xs">Click a screenshot to view it full size.</p>
+          <ProjectGallery
+            title={project.title}
+            images={project.gallery.map((g) => (typeof g === "string" ? { src: g, caption: "" } : g))}
+          />
         </InsetSection>
       )}
 

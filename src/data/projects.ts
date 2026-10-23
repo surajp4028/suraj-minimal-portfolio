@@ -1,5 +1,13 @@
 export type ProjectCategory = "Fintech" | "Website" | "E-commerce" | "Brand Design";
 
+export type GalleryImage = { src: string; caption: string };
+
+export type FeatureGroup = {
+  title: string;
+  description: string;
+  items: { title: string; text: string }[];
+};
+
 export type Project = {
   slug: string;
   title: string;
@@ -17,7 +25,10 @@ export type Project = {
   tools: string[];
   href?: string;
   cover?: string;
-  gallery?: string[];
+  /** Plain paths, or `{ src, caption }` to label a screenshot. */
+  gallery?: (string | GalleryImage)[];
+  /** Optional deep-dive shown on the detail page, grouped by area. */
+  features?: FeatureGroup[];
   accent: string;
   featured?: boolean;
 };
@@ -28,31 +39,108 @@ export const projects: Project[] = [
   {
     slug: "imoneypay-merchant-onboarding",
     title: "Payment Gateway Merchant Onboarding",
-    tagline: "From merchant sign-up to live payments",
+    tagline: "KYC, documents, bank & PG push — from sign-up to live payments",
     category: "Fintech",
     client: "I Money Pay Pvt. Ltd.",
     year: "2026",
     role: "Fullstack Developer",
     summary:
-      "Merchant onboarding & admin console for a payment gateway — KYC journeys, maker-checker-approver-risk queues and PG & bank push.",
+      "End-to-end merchant onboarding & admin console for a payment gateway — Aadhaar/PAN/GST KYC, OCR, penny-less bank checks, PDF dossiers, e-sign, VPA creation and PG & bank push.",
     overview: [
-      "At I Money Pay, a payment gateway company, I build the platform that takes a merchant from sign-up to live payments. Merchants complete a multi-step application with business details, KYC documents, bank account and agreement, and can track its status in real time.",
-      "Internally, applications move through department queues — Maker, Checker, Approver, Risk and Operations — with role-based access, discrepancy handling and block/unblock workflows. Approved merchants are pushed to the payment gateway and to the bank for verification, and the team gets an automated daily status email.",
+      "At I Money Pay, a payment gateway company, I build the platform that takes a merchant from sign-up to live payments. The merchant walks through a guided six-step journey — Business, Signatory, Bank, Documents, Declarations and Submit — with autosave, a progress tracker and live status.",
+      "Every step is verified as it's filled in: Aadhaar and PAN for each signatory, business PAN and GST for the entity, OCR on uploaded IDs to auto-fill details, Aadhaar masking before storage and penny-less bank account verification. Documents are compressed, stored encrypted on AWS S3 and assembled into a single KYC onboarding PDF together with the auto-filled, e-signed merchant agreement.",
+      "On the admin side, applications move through Maker → Checker → Approver → Risk → Operations queues with role-based access, discrepancy flags, document requests and block/unblock. Approved merchants are pushed to the payment gateway and the bank, SID/TID VPAs are created in bulk, and a health page, audit trail and log-retention policies keep the whole system observable and compliant.",
     ],
     highlights: [
-      { title: "Multi-step KYC journey", text: "Business details, documents, bank and agreement with autosave and live status." },
-      { title: "Department queues", text: "Maker → Checker → Approver → Risk → Operations with role-based access." },
-      { title: "PG & bank push APIs", text: "Approved merchants get PG merchant IDs and bank verification automatically." },
-      { title: "Daily status digest", text: "Automated email with every queue's numbers, plus PG-health monitoring." },
+      { title: "Full KYC stack", text: "Aadhaar, PAN, business PAN, GST and CKYC checks via Digio, with OCR auto-fill." },
+      { title: "Privacy by default", text: "Aadhaar masking, encrypted S3 storage, audited changes and log retention." },
+      { title: "PDF engine", text: "Generated, merged and compressed KYC dossiers plus auto-filled, e-signed agreements." },
+      { title: "PG, bank & VPA push", text: "Approved merchants get PG IDs, bank onboarding and bulk SID/TID VPAs." },
     ],
-    tools: ["Next.js", "React", "Node.js", "REST APIs", "Webhooks", "Postman", "JIRA", "Tailwind CSS"],
+    features: [
+      {
+        title: "KYC & identity verification",
+        description: "Every signatory and the business itself is verified while the form is being filled.",
+        items: [
+          { title: "Aadhaar KYC", text: "DigiLocker-based Aadhaar KYC for each authorised signatory through Digio, with the verified record shown back to the merchant." },
+          { title: "PAN verification", text: "PAN verified for every authorised signatory and linked to their Aadhaar KYC record." },
+          { title: "Business PAN", text: "Entity PAN fetched and verified through Digio for the business entered in the Business step." },
+          { title: "GST verification", text: "GSTIN lookup that pre-fills trade name, address and registration status, with a GST declaration PDF when not registered." },
+          { title: "CKYC search", text: "Optional CKYC lookup via Digio to reuse an existing central KYC record." },
+          { title: "OCR on ID documents", text: "Name, DOB, father/guardian and address are read from the uploaded Aadhaar and PAN and auto-filled into the form." },
+          { title: "Aadhaar masking", text: "Aadhaar images are masked through the Digio masking API before storage, so only the last four digits are ever kept." },
+        ],
+      },
+      {
+        title: "Bank verification",
+        description: "Settlement accounts are checked before any money moves.",
+        items: [
+          { title: "Penny-less verification", text: "Account number + IFSC validated and the account holder's name matched — without dropping ₹1 into the account." },
+          { title: "Cancelled cheque", text: "Cancelled-cheque upload kept with the bank details for the reviewer." },
+        ],
+      },
+      {
+        title: "Documents, PDFs & e-sign",
+        description: "From scattered uploads to one signed, reviewable dossier.",
+        items: [
+          { title: "Entity-aware checklist", text: "Required documents change by entity type — Pvt Ltd, Public Ltd, LLP, Proprietorship, Partnership, OPC, HUF, Trust, Society." },
+          { title: "Advanced PDF creation", text: "A multi-page KYC onboarding PDF with business details, signatories, declarations, photos, signatures and ID details read from documents." },
+          { title: "PDF merging", text: "Every uploaded document is appended into the same dossier, so reviewers open one file instead of twenty." },
+          { title: "PDF compression", text: "Large scans are compressed on upload to keep S3 costs and page loads down without losing legibility." },
+          { title: "Merchant agreement", text: "Agreement and GST declaration auto-filled from the application data, with versioned templates managed by compliance." },
+          { title: "E-sign", text: "The merchant e-signs the agreement online; the signed copy is stored and linked to the application." },
+          { title: "Channel-partner documents", text: "Separate document sets and uploads for channel partners who onboard merchants on our behalf." },
+          { title: "Document requests", text: "Admins can request missing items (e.g. MCA master data, shareholders list, board resolution); merchants see and fulfil them." },
+        ],
+      },
+      {
+        title: "Admin console & workflow",
+        description: "A queue-based back office with every action audited.",
+        items: [
+          { title: "Department queues", text: "Maker → Checker → Approver → Risk → Operations, with role-based access per queue." },
+          { title: "Discrepancies & flags", text: "Raise discrepancies, flag risky applications, block and unblock with reasons." },
+          { title: "Live dashboard", text: "Status counters, a 14-day onboarding trend, who's filling forms right now and recent document activity." },
+          { title: "Configurable onboarding", text: "Toggle allowed entity types and promote new requirement-matrix versions without freezing older applications." },
+          { title: "Manage MCC list", text: "Maintain merchant category codes used for risk rules, PG setup and VPA creation." },
+          { title: "Ops export", text: "One-click OPS sheet export for the operations team." },
+        ],
+      },
+      {
+        title: "PG, bank & VPA push",
+        description: "Turning an approved application into a live merchant.",
+        items: [
+          { title: "PG push", text: "Approved merchants are created on the payment gateway and receive their merchant ID automatically." },
+          { title: "Bank push", text: "Merchant details are encrypted and pushed to the partner bank's onboarding API, with responses stored on the application." },
+          { title: "VPA creation", text: "SID and TID VPAs are staged from a CSV import, reviewed, encrypted and pushed in bulk, with per-day limits and status tracking." },
+        ],
+      },
+      {
+        title: "Monitoring, security & compliance",
+        description: "Keeping a regulated system healthy and auditable.",
+        items: [
+          { title: "Health status", text: "One-click probes for S3, the database and every Digio API (PAN, GST, CKYC, DigiLocker, Aadhaar masking) with pass/fail and latency." },
+          { title: "Log retention", text: "Application and API logs are kept for a defined retention window and cleaned up per policy." },
+          { title: "Audit trail & auditor view", text: "Every admin change is logged and a read-only auditor view supports compliance reviews." },
+          { title: "Daily status digest", text: "Automated email summarising every queue, plus PG-health monitoring." },
+        ],
+      },
+    ],
+    tools: ["Next.js", "React", "Node.js", "PHP", "MySQL", "AWS S3", "REST APIs", "Webhooks", "Digio", "Postman", "JIRA", "Tailwind CSS"],
     href: "https://www.imoneypay.in/",
-    // Screenshots have merchant names, IDs, faces and chat details blurred.
-    cover: img("onboarding-admin.webp"),
+    // Screenshots have merchant names, IDs, VPAs, emails, faces and Aadhaar details blurred.
+    cover: img("onboarding-admin-dashboard.webp"),
     gallery: [
-      img("onboarding-applications.webp"),
-      img("onboarding-merchant.webp"),
-      img("onboarding-inbox.webp"),
+      { src: img("onboarding-aadhaar-ocr.webp"), caption: "Signatory step — Aadhaar uploaded, verified with Digio, OCR'd and stored masked" },
+      { src: img("onboarding-documents-review.webp"), caption: "Review & submit — every document on file, ready to open" },
+      { src: img("onboarding-kyc-pdf-documents.webp"), caption: "Generated KYC PDF — merged uploads with timestamps" },
+      { src: img("onboarding-kyc-pdf-declarations.webp"), caption: "Generated KYC PDF — declarations, photographs and signatures" },
+      { src: img("onboarding-admin.webp"), caption: "Admin console — applications overview" },
+      { src: img("onboarding-admin-settings.webp"), caption: "Settings — entity types and requirement-matrix versions" },
+      { src: img("onboarding-vpa-creation.webp"), caption: "VPA creation — staged SID/TID VPAs pushed in bulk" },
+      { src: img("onboarding-health-status.webp"), caption: "Health status — S3, database and Digio API probes" },
+      { src: img("onboarding-applications.webp"), caption: "Applications queue" },
+      { src: img("onboarding-merchant.webp"), caption: "Merchant application detail" },
+      { src: img("onboarding-inbox.webp"), caption: "Merchant inbox — document requests and chat" },
     ],
     accent: "from-sky-500 to-indigo-600",
     featured: true,
