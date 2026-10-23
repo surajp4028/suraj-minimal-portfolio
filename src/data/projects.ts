@@ -126,7 +126,7 @@ export const projects: Project[] = [
       },
     ],
     tools: ["Next.js", "React", "Node.js", "PHP", "MySQL", "AWS S3", "REST APIs", "Webhooks", "Digio", "Postman", "JIRA", "Tailwind CSS"],
-    href: "https://www.imoneypay.in/",
+    href: "https://onboarding.imoneypg.com/",
     // Screenshots have merchant names, IDs, VPAs, emails, faces and Aadhaar details blurred.
     cover: img("onboarding-admin-dashboard.webp"),
     gallery: [
